@@ -13,8 +13,14 @@ public class VeiculoRepositoryImpl implements ada.tech.app.repositories.VeiculoR
 
     @Override
     public Veiculo criar(Veiculo o) {
+        boolean jaExiste = procurarPorPlaca(o.getPlaca()).isEmpty();
+        if(!jaExiste){
+            throw new RuntimeException("Veiculo ja cadastrado!");
+        }
+
         if (o.getRepositoryID() == null) {
             o.setRepositoryID(veiculos.size());
+
             veiculos.add(o);
         } else {
             Veiculo substituir = veiculos.get(o.getRepositoryID());
@@ -27,7 +33,7 @@ public class VeiculoRepositoryImpl implements ada.tech.app.repositories.VeiculoR
 
     @Override
     public void deletar(String placa) {
-        Optional<Veiculo> v = procurarPorId(placa);
+        Optional<Veiculo> v = procurarPorPlaca(placa);
         if (v.isEmpty()) {
             System.out.println("Veiculo nao encontrado!");
         } else {
@@ -42,7 +48,7 @@ public class VeiculoRepositoryImpl implements ada.tech.app.repositories.VeiculoR
     }
 
     @Override
-    public Optional<Veiculo> procurarPorId(String placa) {
+    public Optional<Veiculo> procurarPorPlaca(String placa) {
         return veiculos.stream().filter(
                 veiculo -> veiculo.getPlaca().equals(placa)).findFirst();
 

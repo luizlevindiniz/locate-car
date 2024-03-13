@@ -1,14 +1,23 @@
 package ada.tech.app.models;
 
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
-public class PF extends  Pessoa{
+
+@Setter
+@Getter
+public class PF extends Pessoa {
     private String CPF;
+    public PF(String nome, String CPF, boolean alugouCarro) {
+        super( nome, alugouCarro);
+        this.CPF = CPF;
+    }
+
+    @Override
+    public String toString(){
+        return this.nome + " " + this.CPF;
+    }
 
 }

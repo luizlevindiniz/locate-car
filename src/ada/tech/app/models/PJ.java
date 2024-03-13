@@ -1,13 +1,21 @@
 package ada.tech.app.models;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
+
+@Setter
+@Getter
 public class PJ extends Pessoa{
     private String CNPJ;
+
+    public PJ(String nome, String CNPJ, boolean alugouCarro) {
+        super( nome, alugouCarro);
+        this.CNPJ = CNPJ;
+    }
+
+    @Override
+    public String toString(){
+        return this.nome + " " + this.CNPJ;
+    }
 
 }

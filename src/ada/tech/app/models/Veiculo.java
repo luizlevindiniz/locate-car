@@ -3,24 +3,26 @@ package ada.tech.app.models;
 
 import lombok.*;
 
-@Data
+@Getter
+@Setter
 @Builder
+@AllArgsConstructor
 public class Veiculo {
-    private Integer repositoryID;
+    private Integer repositoryID; // o lombok não tem uma opcao de nao setar esse cara
 
-    @NonNull private String placa;
+    private String nome;
 
-    @NonNull private String nome;
+    private String placa;
 
-    @NonNull private String marca;
+    private String marca;
 
-    @NonNull TipoCarro tipo;
+    TipoCarro tipo;
 
-    @NonNull private boolean estaAlugado;
+    private boolean estaAlugado;
 
     @Override
-    public String toString(){
-        return "Veiculo " + this.nome + " placa: " + this.placa;
+    public String toString() {
+        return "Veiculo: " + this.nome + " | Marca: " + this.marca + " | Placa: " + this.placa + " | Tipo: " + this.tipo;
     }
 
 }

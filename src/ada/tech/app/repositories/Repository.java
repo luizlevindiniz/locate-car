@@ -11,5 +11,5 @@ public interface Repository<T> {
 
     List<T> listarTodos();
 
-   Optional<T> procurarPorId(String id);
+   Optional<T> procurarPorPlaca(String placa);
 }
