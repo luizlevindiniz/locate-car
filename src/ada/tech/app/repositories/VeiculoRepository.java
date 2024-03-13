@@ -6,4 +6,5 @@ import java.util.List;
 
 public interface VeiculoRepository extends Repository<Veiculo> {
     List<Veiculo> procurarPorNome(String nome);
+
 }

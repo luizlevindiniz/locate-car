@@ -5,11 +5,14 @@ import java.util.Optional;
 
 public interface Repository<T> {
 
-    T criar(T o);
+    void criar(T o);
 
-    void deletar(String id);
+    void deletar(String identificador);
 
     List<T> listarTodos();
 
-   Optional<T> procurarPorPlaca(String placa);
+   Optional<T> procuparPorIdentificador(String identificador);
+
+    int tamanhoDaLista();
+
 }
