@@ -2,10 +2,12 @@ package ada.tech.app.models;
 
 import lombok.Getter;
 import lombok.Setter;
+import java.util.regex.Pattern;
 
 
 @Setter
 @Getter
+
 public class PJ extends Pessoa {
     private String CNPJ;
 
@@ -26,12 +28,12 @@ public class PJ extends Pessoa {
     }
 
     private boolean validarCNPJ(String CNPJ) {
-        return CNPJ.matches("\\d{14}") && !CNPJ.matches("(\\d)\\1{13}");
+        String regex = "([0-9]{2}[\\.]?[0-9]{3}[\\.]?[0-9]{3}[\\/]?[0-9]{4}[-]?[0-9]{2})|([0-9]{3}[\\.]?[0-9]{3}[\\.]?[0-9]{3}[-]?[0-9]{2})";
+        return Pattern.matches(regex, CNPJ);
     }
 
     @Override
     public String toString() {
         return this.nome + " " + this.CNPJ;
     }
-
 }
