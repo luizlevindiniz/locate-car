@@ -7,36 +7,33 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class AluguelRepositoryImpl implements AluguelRepository {
+public class AluguelRepositoryImpl implements AluguelRepository<Aluguel> {
     private final List<Aluguel> listaAlugueis = new ArrayList<>();
 
     @Override
-    public void alugar(Aluguel o) {
+    public void registrarAlugel(Aluguel o) {
         if (o.getRepositoryID() == null) {
             o.setRepositoryID(listaAlugueis.size());
 
             listaAlugueis.add(o);
-        } else {
-            Aluguel substituir = listaAlugueis.get(o.getRepositoryID());
-            listaAlugueis.remove(substituir);
-            listaAlugueis.add(o.getRepositoryID(), o);
         }
     }
 
     @Override
     public void devolverPorPlaca(String identificador) {
 
+        Optional<Aluguel> aluguel = procuparPorPlaca(identificador);
+        if (aluguel.isEmpty()) {
+            System.out.println("Aluguel nao encontrado para este veiculo!");
+        } else {
+            aluguel.get().getVeiculo().setEstaAlugado(false);
+            aluguel.get().getPessoa().setAlugouCarro(false);
+            listaAlugueis.remove(aluguel.get());
+            System.out.println(aluguel.get().getPessoa().getNome() + " devolveu o veiculo!");
+        }
+
     }
 
-    @Override
-    public void devolverPorCPF(String cpf) {
-
-    }
-
-    @Override
-    public void devolverPorCNPJ(String cnpj) {
-
-    }
 
     @Override
     public List<Aluguel> listarTodos() {
@@ -44,22 +41,9 @@ public class AluguelRepositoryImpl implements AluguelRepository {
     }
 
     @Override
-    public Optional procuparPorPlaca(String placa) {
-        return Optional.empty();
+    public Optional<Aluguel> procuparPorPlaca(String placa) {
+        return listaAlugueis.stream().filter(aluguel -> aluguel.getVeiculo().getPlaca().equals(placa)).findFirst();
     }
 
-    @Override
-    public Optional procuparPorCPF(String placa) {
-        return Optional.empty();
-    }
 
-    @Override
-    public Optional procuparPorCNPJ(String placa) {
-        return Optional.empty();
-    }
-
-    @Override
-    public int tamanhoDaLista() {
-        return listaAlugueis.size();
-    }
 }
