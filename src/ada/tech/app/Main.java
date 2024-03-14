@@ -1,6 +1,9 @@
 package ada.tech.app;
 
-import ada.tech.app.models.*;
+import ada.tech.app.models.PF;
+import ada.tech.app.models.PJ;
+import ada.tech.app.models.TipoCarro;
+import ada.tech.app.models.Veiculo;
 import ada.tech.app.repositories.PFRepository;
 import ada.tech.app.repositories.PJRepository;
 import ada.tech.app.repositories.VeiculoRepository;
@@ -44,7 +47,7 @@ public class Main {
         // procurar por parte do nome
         List<Veiculo> procurarPorNome = veiculos.procurarPorNome("mille");
         procurarPorNome.forEach(System.out::println);
-
+        System.out.println();
 
         // --- Testes de PF e PJ --- //
         PF pf1 = new PF("Bruno Pinho", "084.518.526-88", false);
@@ -68,6 +71,7 @@ public class Main {
         listarPFs.forEach(System.out::println);
         listarPJs.forEach(System.out::println);
 
+        System.out.println();
         // tentar criar PF e PJ com os mesmos identificadores
         PF pf3 = new PF("Bruno Pinho", "111.222.333-44", false);
         PJ pj3 = new PJ("Ada Tech", "41.846.322/0001-70", false);

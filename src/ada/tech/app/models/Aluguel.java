@@ -10,6 +10,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Builder
 public class Aluguel {
+    private Integer repositoryID;
     private Pessoa pessoa;
     private Veiculo veiculo;
     private LocalDate dataInicio;
