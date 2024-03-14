@@ -6,18 +6,20 @@ import ada.tech.app.models.Veiculo;
 import ada.tech.app.repositories.impl.AluguelRepositoryImpl;
 
 import java.time.LocalDate;
-import java.util.List;
 
 public class AluguelService {
     private static AluguelRepositoryImpl aluguelRepository = new AluguelRepositoryImpl();
 
-    public static Aluguel alugarVeiculo(Pessoa pessoa, Veiculo veiculo, LocalDate dataInicio, int duracaoEmDias) {
+    public static void alugarVeiculo(Pessoa pessoa, Veiculo veiculo, LocalDate dataInicio, int duracaoEmDias) {
         if (!pessoa.isAlugouCarro() && !veiculo.isEstaAlugado()) {
 
             Aluguel aluguel = Aluguel.builder().pessoa(pessoa).veiculo(veiculo).dataInicio(dataInicio).duracaoEmDias(duracaoEmDias).build();
             aluguelRepository.registrarAlugel(aluguel);
+
+        } else {
+            throw new RuntimeException("Veiculo ou pessoa ja possui um aluguel!");
+
         }
-        throw new RuntimeException("Veiculo ou pessoa ja possui um aluguel!");
     }
 
     public static void devolverVeiculo(Veiculo veiculo) {
@@ -27,8 +29,9 @@ public class AluguelService {
 
     }
 
-    public static List<Aluguel> listarAlugueis() {
-        return aluguelRepository.listarTodos();
+    public static void listarAlugueis() {
+        aluguelRepository.listarTodos().forEach(System.out::println);
+
     }
 };
 

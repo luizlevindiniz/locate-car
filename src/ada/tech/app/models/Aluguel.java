@@ -33,5 +33,10 @@ public class Aluguel {
         return valorTotal;
     }
 
+    @Override
+    public String toString() {
+        return "Alugado o veiculo de placa %s para %s".formatted(veiculo.getPlaca(), pessoa.getNome());
+    }
+
 }
 
