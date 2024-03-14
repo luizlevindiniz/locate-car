@@ -48,7 +48,7 @@ public class PF extends Pessoa {
 
             return (CPF.charAt(10) - '0') == digitoVerificador2;
         }
-    }
+
     public PF(String nome, String CPF, boolean alugouCarro) {
         super( nome, alugouCarro);
         setCPF(CPF);
