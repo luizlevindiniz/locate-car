@@ -20,6 +20,7 @@ public class PF extends Pessoa {
 
         if (validarCPF(CPF)) {
             this.CPF = CPF;
+            setIdentificador(CPF);
         } else {
             throw new IllegalArgumentException("CPF inválido");
         }

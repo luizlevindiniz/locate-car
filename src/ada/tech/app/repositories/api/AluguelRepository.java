@@ -1,4 +1,4 @@
-package ada.tech.app.repositories;
+package ada.tech.app.repositories.api;
 
 import ada.tech.app.models.Aluguel;
 
@@ -8,7 +8,7 @@ import java.util.Optional;
 public interface AluguelRepository<T extends Aluguel> {
     void registrarAlugel(T o);
 
-    void devolverPorPlaca(String placa);
+    T devolverVeiculo(String placa);
 
 
     List<T> listarTodos();

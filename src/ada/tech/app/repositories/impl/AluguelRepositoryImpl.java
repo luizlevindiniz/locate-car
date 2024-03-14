@@ -1,7 +1,7 @@
 package ada.tech.app.repositories.impl;
 
 import ada.tech.app.models.Aluguel;
-import ada.tech.app.repositories.AluguelRepository;
+import ada.tech.app.repositories.api.AluguelRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,16 +20,14 @@ public class AluguelRepositoryImpl implements AluguelRepository<Aluguel> {
     }
 
     @Override
-    public void devolverPorPlaca(String identificador) {
+    public Aluguel devolverVeiculo(String placa) {
 
-        Optional<Aluguel> aluguel = procuparPorPlaca(identificador);
+        Optional<Aluguel> aluguel = procuparPorPlaca(placa);
         if (aluguel.isEmpty()) {
-            System.out.println("Aluguel nao encontrado para este veiculo!");
+            throw new RuntimeException("Este veiculo nao esta alugado!");
         } else {
-            aluguel.get().getVeiculo().setEstaAlugado(false);
-            aluguel.get().getPessoa().setAlugouCarro(false);
             listaAlugueis.remove(aluguel.get());
-            System.out.println(aluguel.get().getPessoa().getNome() + " devolveu o veiculo!");
+            return aluguel.get();
         }
 
     }

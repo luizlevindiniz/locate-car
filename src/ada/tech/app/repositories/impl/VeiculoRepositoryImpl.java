@@ -1,20 +1,21 @@
 package ada.tech.app.repositories.impl;
 
 import ada.tech.app.models.Veiculo;
+import ada.tech.app.repositories.api.VeiculoRepository;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class VeiculoRepositoryImpl implements ada.tech.app.repositories.VeiculoRepository {
+public class VeiculoRepositoryImpl implements VeiculoRepository {
 
     private final List<Veiculo> veiculos = new ArrayList<>();
 
 
     @Override
-    public void criar(Veiculo o) {
+    public void adicionar(Veiculo o) {
         boolean jaExiste = procuparPorIdentificador(o.getPlaca()).isEmpty();
-        if(!jaExiste){
+        if (!jaExiste) {
             throw new RuntimeException("Veiculo ja cadastrado!");
         }
 
@@ -61,5 +62,10 @@ public class VeiculoRepositoryImpl implements ada.tech.app.repositories.VeiculoR
     @Override
     public int tamanhoDaLista() {
         return veiculos.size();
+    }
+
+    @Override
+    public void deletarTodos() {
+        veiculos.clear();
     }
 }

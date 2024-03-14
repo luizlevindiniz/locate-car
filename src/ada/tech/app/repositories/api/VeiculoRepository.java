@@ -1,4 +1,4 @@
-package ada.tech.app.repositories;
+package ada.tech.app.repositories.api;
 
 import ada.tech.app.models.Veiculo;
 
