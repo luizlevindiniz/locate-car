@@ -12,6 +12,10 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Builder
 public class Aluguel {
+    /* Infelizmente, o lombok não tem uma opcao para escolher quais campos entrar no builder. O builder
+     * ira mostrar todos os campos, mesmo que nao queiramos expor o repositoryID. Ignorar que e possivel construir
+     * um objeto ja definindo o repositoryID ao inves dele ser automaticamente definido quando adicionado na lista
+     * de alugueis.  */
     private Integer repositoryID;
     private Pessoa pessoa;
     private Veiculo veiculo;

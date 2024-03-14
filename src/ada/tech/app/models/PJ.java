@@ -9,8 +9,8 @@ import lombok.Setter;
 public class PJ extends Pessoa {
     private String CNPJ;
 
-    public PJ(String nome, String CNPJ, boolean alugouCarro) {
-        super(nome, alugouCarro);
+    public PJ(String nome, String CNPJ) {
+        super(nome);
         setCNPJ(CNPJ);
     }
 

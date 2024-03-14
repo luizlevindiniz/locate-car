@@ -8,39 +8,40 @@ import java.util.List;
 import java.util.Optional;
 
 public class AluguelRepositoryImpl implements AluguelRepository<Aluguel> {
-    private final List<Aluguel> listaAlugueis = new ArrayList<>();
+    private final List<Aluguel> alugueisVigentes = new ArrayList<>();
 
     @Override
-    public void registrarAlugel(Aluguel o) {
-        if (o.getRepositoryID() == null) {
-            o.setRepositoryID(listaAlugueis.size());
+    public void registrarAlugel(Aluguel aluguel) {
+        if (aluguel.getRepositoryID() == null) {
+            aluguel.setRepositoryID(alugueisVigentes.size());
 
-            listaAlugueis.add(o);
+            alugueisVigentes.add(aluguel);
         }
     }
 
     @Override
     public Aluguel devolverVeiculo(String placa) {
 
-        Optional<Aluguel> aluguel = procuparPorPlaca(placa);
-        if (aluguel.isEmpty()) {
+        Optional<Aluguel> aluguelProcurado = procuparPorPlaca(placa);
+        if (aluguelProcurado.isEmpty()) {
             throw new RuntimeException("Este veiculo nao esta alugado!");
         } else {
-            listaAlugueis.remove(aluguel.get());
-            return aluguel.get();
+            alugueisVigentes.remove(aluguelProcurado.get());
+            aluguelProcurado.get().setRepositoryID(null);
+            return aluguelProcurado.get();
         }
 
     }
 
 
     @Override
-    public List<Aluguel> listarTodos() {
-        return listaAlugueis;
+    public List<Aluguel> listarAlugueis() {
+        return alugueisVigentes;
     }
 
     @Override
     public Optional<Aluguel> procuparPorPlaca(String placa) {
-        return listaAlugueis.stream().filter(aluguel -> aluguel.getVeiculo().getPlaca().equals(placa)).findFirst();
+        return alugueisVigentes.stream().filter(aluguel -> aluguel.getVeiculo().getPlaca().equals(placa)).findFirst();
     }
 
 

@@ -9,12 +9,12 @@ public interface Repository<T> {
 
     void deletar(String identificador);
 
-    List<T> listarTodos();
+    List<T> listarCadastrados();
 
     Optional<T> procuparPorIdentificador(String identificador);
 
-    int tamanhoDaLista();
+    int quantidadeDeCadastros();
 
-    void deletarTodos();
+    void deletarTodosOsCadastros();
 
 }

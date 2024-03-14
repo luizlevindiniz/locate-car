@@ -17,12 +17,12 @@ public class TesteVeiculos {
 
         // create veiculo
         veiculos.adicionar(v1);
-        List<Veiculo> listarVeiculos = veiculos.listarTodos();
+        List<Veiculo> listarVeiculos = veiculos.listarCadastrados();
         listarVeiculos.forEach(System.out::println);
 
         // update veiculo
         Veiculo v2 = Veiculo.builder().nome("Uno Mille").placa("4D4T3CH").marca("Fiat")
-                .alugado(false).tipo(TipoVeiculo.PEQUENO).repositoryID(veiculos.tamanhoDaLista() - 1).build();
+                .alugado(false).tipo(TipoVeiculo.PEQUENO).repositoryID(veiculos.quantidadeDeCadastros() - 1).build();
         veiculos.adicionar(v2);
         listarVeiculos.forEach(System.out::println);
 
@@ -41,6 +41,6 @@ public class TesteVeiculos {
         System.out.println();
 
         // finalizando
-        veiculos.deletarTodos();
+        veiculos.deletarTodosOsCadastros();
     }
 }

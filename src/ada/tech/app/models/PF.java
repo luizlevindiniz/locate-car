@@ -10,8 +10,8 @@ import lombok.Setter;
 public class PF extends Pessoa {
     private String CPF;
 
-    public PF(String nome, String CPF, boolean alugouCarro) {
-        super(nome, alugouCarro);
+    public PF(String nome, String CPF) {
+        super(nome);
         setCPF(CPF);
     }
 

@@ -12,11 +12,15 @@ import lombok.Setter;
 @AllArgsConstructor
 public class Veiculo {
     TipoVeiculo tipo;
-    private Integer repositoryID; // o lombok não tem uma opcao de nao setar esse cara
+    /* Infelizmente, o lombok não tem uma opcao para escolher quais campos entrar no builder. O builder
+     * ira mostrar todos os campos, mesmo que nao queiramos expor o repositoryID. Ignorar que e possivel construir
+     * um objeto ja definindo o repositoryID ao inves dele ser automaticamente definido quando adicionado na lista
+     * de veiculos.  */
+    private Integer repositoryID;
     private String nome;
     private String placa;
     private String marca;
-    private boolean alugado;
+    private boolean alugado = false;
 
     @Override
     public String toString() {

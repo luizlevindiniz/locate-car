@@ -11,7 +11,7 @@ public interface AluguelRepository<T extends Aluguel> {
     T devolverVeiculo(String placa);
 
 
-    List<T> listarTodos();
+    List<T> listarAlugueis();
 
     Optional<T> procuparPorPlaca(String placa);
 

@@ -3,3 +3,8 @@
 Kaiky - Luiz - Ryan - Marcos
 
 Obs: necessário lombok
+
+## Explicacao
+
+## Dificuldades
+

@@ -1,14 +1,13 @@
 package ada.tech.app.services;
 
-import ada.tech.app.models.Aluguel;
-import ada.tech.app.models.Pessoa;
-import ada.tech.app.models.Veiculo;
+import ada.tech.app.models.*;
 import ada.tech.app.repositories.api.AluguelRepository;
 import ada.tech.app.repositories.api.PessoaRepository;
 import ada.tech.app.repositories.api.VeiculoRepository;
 import ada.tech.app.repositories.impl.AluguelRepositoryImpl;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 
 public class AluguelService {
@@ -17,83 +16,101 @@ public class AluguelService {
     public static void alugarVeiculo(Pessoa pessoa, Veiculo veiculo, LocalDate dataInicio, VeiculoRepository veiculos,
                                      PessoaRepository pessoas) {
 
-        if (!pessoa.isAlugouCarro() && !veiculo.isAlugado()) {
+        if (!veiculo.isAlugado()) {
 
-            // checar cadastro do veiculo e da pessoa
-            if (!verificarCadastro(pessoa, veiculo, veiculos, pessoas)) {
-                throw new RuntimeException("Veiculo ou pessoa nao cadastrado no repositorio!\n");
+            // checar se veiculo ja esta cadastrado
+            if (verificarCadastroPessoa(pessoa, pessoas)) {
+                throw new RuntimeException("Pessoa nao cadastrado no repositorio!\n");
             }
 
-            // checar se o veiculo esta mesmo disponivel
-            if (verificaDisponibilidadeVeiculo(veiculos, veiculo)) {
+            // checar se pessoa ja esta cadastrada
+            if (verificarCadastroVeiculo(veiculo, veiculos)) {
+                throw new RuntimeException("Veiculo nao cadastrado no repositorio!\n");
+            }
+            // checar se o veiculo esta realmente disponivel para locacao
+            if (verificaDisponibilidadeVeiculo(veiculo, veiculos)) {
                 throw new RuntimeException("Veiculo ja possui aluguel ativo!\n");
             }
 
             // registrar aluguel
-
             Aluguel aluguel = Aluguel.builder().pessoa(pessoa).veiculo(veiculo).dataInicio(dataInicio).build();
             aluguelRepository.registrarAlugel(aluguel);
-            pessoa.setAlugouCarro(true);
+            pessoa.registrarVeiculoAlugado(veiculo);
             veiculo.setAlugado(true);
-            System.out.printf("Veiculo %s alugado para %s\n", veiculo.getNome(), pessoa.getNome());
+            System.out.printf("Veiculo %s de placa %s alugado para %s\n", veiculo.getNome(), veiculo.getPlaca()
+                    , pessoa.getNome());
 
         } else {
-            throw new RuntimeException("Parece que este veiculo ou pessoa ja possui aluguel ativo!\n");
+            throw new RuntimeException("Nao e possivel alugar um veiculo que ja possui aluguel ativo!\n");
 
         }
     }
 
-    public static void devolverVeiculo(Veiculo veiculo, LocalDate dataFim) {
+    public static void devolverVeiculo(Veiculo veiculo, LocalDate dataFim, VeiculoRepository veiculos) {
         if (veiculo.isAlugado()) {
+
+            // checar cadastro do veiculo
+            if (verificarCadastroVeiculo(veiculo, veiculos)) {
+                throw new RuntimeException("Veiculo nao cadastrado no repositorio!\n");
+            }
+
+            // checar se o veiculo esta realmente indisponivel para locacao
+            if (!verificaDisponibilidadeVeiculo(veiculo, veiculos)) {
+                throw new RuntimeException("Veiculo nao possui aluguel ativo!\n");
+            }
+
+
             Aluguel devolvido = aluguelRepository.devolverVeiculo(veiculo.getPlaca());
-            devolvido.getPessoa().setAlugouCarro(false);
+            devolvido.getPessoa().removerVeiculoAlugado(veiculo);
             devolvido.getVeiculo().setAlugado(false);
             System.out.printf("Veiculo %s de placa %s devolvido!\n", veiculo.getNome(), veiculo.getPlaca());
+            calcularValorTotal(devolvido, dataFim);
+        } else {
+            throw new RuntimeException("Nao e possivel devolver um veiculo que nao esteja alugado!\n");
+
         }
 
     }
 
     public static void printarVeiculosAlugados() {
-        aluguelRepository.listarTodos().forEach(System.out::println);
+        aluguelRepository.listarAlugueis().forEach(System.out::println);
 
     }
 
-    private static boolean verificarCadastro(Pessoa pessoa, Veiculo veiculo, VeiculoRepository veiculos, PessoaRepository pessoas) {
-        // checar se pessoa ja esta cadastrada
-        if (pessoas.procuparPorIdentificador(pessoa.getIdentificador()).isEmpty()) {
-            return false;
-        }
+    private static boolean verificarCadastroPessoa(Pessoa pessoa, PessoaRepository pessoas) {
+        return pessoas.procuparPorIdentificador(pessoa.getIdentificador()).isEmpty();
 
-        // checar se veiculo ja esta cadastrado
-        if (veiculos.procuparPorIdentificador(veiculo.getPlaca()).isEmpty()) {
-            return false;
-        }
-        return true;
     }
 
-    private static boolean verificaDisponibilidadeVeiculo(VeiculoRepository veiculos, Veiculo veiculo) {
-        Optional<Veiculo> veiculoOptional = veiculos.procuparPorIdentificador(veiculo.getPlaca());
-        return veiculoOptional.isPresent() && veiculoOptional.get().isAlugado();
+    private static boolean verificarCadastroVeiculo(Veiculo veiculo, VeiculoRepository veiculos) {
+        return veiculos.procuparPorIdentificador(veiculo.getPlaca()).isEmpty();
     }
 
-    /*
-    public double calcularValorTotal() {
-        boolean isSUV = veiculo.getTipo() == TipoCarro.SUV;
+    private static boolean verificaDisponibilidadeVeiculo(Veiculo veiculo, VeiculoRepository veiculos) {
+        Optional<Veiculo> veiculoProcurado = veiculos.procuparPorIdentificador(veiculo.getPlaca());
+        return veiculoProcurado.isPresent() && veiculoProcurado.get().isAlugado();
+    }
 
-        double valorDiaria = isSUV ? 200.0 : (veiculo.getTipo() == TipoCarro.MEDIO ? 150.0 : 100.0);
+
+    private static void calcularValorTotal(Aluguel devolucao, LocalDate dataFim) {
+        boolean isSUV = devolucao.getVeiculo().getTipo() == TipoVeiculo.SUV;
+
+        double valorDiaria = isSUV ? 200.0 : (devolucao.getVeiculo().getTipo() == TipoVeiculo.MEDIO ? 150.0 : 100.0);
+
+        int duracaoEmDias = (int) ChronoUnit.DAYS.between(devolucao.getDataInicio(), dataFim);
 
         double valorTotal = valorDiaria * duracaoEmDias;
 
-        if (pessoa instanceof PF && duracaoEmDias > 5) {
+        if (devolucao.getPessoa() instanceof PF && duracaoEmDias > 5) {
             valorTotal *= 0.95;
-        } else if (pessoa instanceof PJ && duracaoEmDias > 3) {
+        } else if (devolucao.getPessoa() instanceof PJ && duracaoEmDias > 3) {
             valorTotal *= 0.90;
         }
 
-        return valorTotal;
-    }
+        System.out.printf("Total a cobrar: R$ %.2f - %d dias alugando o %s.\n", valorTotal,
+                duracaoEmDias, devolucao.getVeiculo().getNome());
 
-     */
+    }
 
 };
 

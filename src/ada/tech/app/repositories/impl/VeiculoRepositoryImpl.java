@@ -9,63 +9,69 @@ import java.util.Optional;
 
 public class VeiculoRepositoryImpl implements VeiculoRepository {
 
-    private final List<Veiculo> veiculos = new ArrayList<>();
+    private final List<Veiculo> veiculosCadastrados = new ArrayList<>();
 
 
     @Override
-    public void adicionar(Veiculo o) {
-        boolean jaExiste = procuparPorIdentificador(o.getPlaca()).isEmpty();
-        if (!jaExiste) {
+    public void adicionar(Veiculo veiculo) {
+        boolean veiculoJaExiste = procuparPorIdentificador(veiculo.getPlaca()).isEmpty();
+        if (!veiculoJaExiste) {
             throw new RuntimeException("Veiculo ja cadastrado!");
         }
 
-        if (o.getRepositoryID() == null) {
-            o.setRepositoryID(veiculos.size());
+        if (veiculo.getRepositoryID() == null) {
+            veiculo.setRepositoryID(veiculosCadastrados.size());
 
-            veiculos.add(o);
+            veiculosCadastrados.add(veiculo);
         } else {
-            Veiculo substituir = veiculos.get(o.getRepositoryID());
-            veiculos.remove(substituir);
-            veiculos.add(o.getRepositoryID(), o);
+            Veiculo substituir = veiculosCadastrados.get(veiculo.getRepositoryID());
+            veiculosCadastrados.remove(substituir);
+            veiculosCadastrados.add(veiculo.getRepositoryID(), veiculo);
+            substituir.setRepositoryID(null);
         }
     }
 
 
     @Override
-    public void deletar(String placa) {
-        Optional<Veiculo> v = procuparPorIdentificador(placa);
-        if (v.isEmpty()) {
+    public void deletar(String placaDoVeiculo) {
+        Optional<Veiculo> veiculoProcurado = procuparPorIdentificador(placaDoVeiculo);
+        if (veiculoProcurado.isEmpty()) {
             System.out.println("Veiculo nao encontrado!");
         } else {
-            veiculos.remove(v.get());
-            System.out.println(v.get().getNome() + "removido(a).");
+            veiculosCadastrados.remove(veiculoProcurado.get());
+            veiculoProcurado.get().setRepositoryID(null);
+            System.out.println(veiculoProcurado.get().getNome() + "removido(a).");
         }
     }
 
     @Override
-    public List<Veiculo> listarTodos() {
-        return veiculos;
+    public List<Veiculo> listarCadastrados() {
+        return veiculosCadastrados;
     }
 
     @Override
-    public Optional<Veiculo> procuparPorIdentificador(String placa) {
-        return veiculos.stream().filter(
-                veiculo -> veiculo.getPlaca().equals(placa)).findFirst();
+    public Optional<Veiculo> procuparPorIdentificador(String placaDoVeiculo) {
+        return veiculosCadastrados.stream().filter(
+                veiculo -> veiculo.getPlaca().equals(placaDoVeiculo)).findFirst();
 
     }
 
     @Override
-    public List<Veiculo> procurarPorNome(String nome) {
-        return veiculos.stream().filter(veiculo -> veiculo.getNome().toLowerCase().contains(nome)).toList();
+    public List<Veiculo> procurarPorNome(String nomeDoVeiculo) {
+        return veiculosCadastrados.stream().filter(veiculo -> veiculo.getNome().toLowerCase().contains(nomeDoVeiculo)).toList();
     }
 
     @Override
-    public int tamanhoDaLista() {
-        return veiculos.size();
+    public int quantidadeDeCadastros() {
+        return veiculosCadastrados.size();
     }
 
     @Override
-    public void deletarTodos() {
-        veiculos.clear();
+    public void deletarTodosOsCadastros() {
+
+        for (Veiculo v : veiculosCadastrados) {
+            v.setRepositoryID(null);
+        }
+        veiculosCadastrados.clear();
     }
 }
