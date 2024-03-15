@@ -6,8 +6,6 @@ import ada.tech.app.repositories.api.PessoaRepository;
 import ada.tech.app.repositories.api.VeiculoRepository;
 import ada.tech.app.repositories.impl.AluguelRepositoryImpl;
 
-import java.sql.Time;
-import java.time.LocalDateTime;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Optional;
