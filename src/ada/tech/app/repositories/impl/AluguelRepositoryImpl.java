@@ -1,6 +1,7 @@
 package ada.tech.app.repositories.impl;
 
 import ada.tech.app.models.Aluguel;
+import ada.tech.app.models.LocaisAluguel;
 import ada.tech.app.repositories.api.AluguelRepository;
 
 import java.util.ArrayList;
@@ -20,7 +21,7 @@ public class AluguelRepositoryImpl implements AluguelRepository<Aluguel> {
     }
 
     @Override
-    public Aluguel devolverVeiculo(String placa) {
+    public Aluguel devolverVeiculo(String placa, LocaisAluguel localDevolucao) {
 
         Optional<Aluguel> aluguelProcurado = procuparPorPlaca(placa);
         if (aluguelProcurado.isEmpty()) {

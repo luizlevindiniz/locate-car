@@ -6,15 +6,17 @@ import ada.tech.app.repositories.api.PessoaRepository;
 import ada.tech.app.repositories.api.VeiculoRepository;
 import ada.tech.app.repositories.impl.AluguelRepositoryImpl;
 
-import java.time.LocalDate;
+import java.sql.Time;
+import java.time.LocalDateTime;
+import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 
 public class AluguelService {
     private static final AluguelRepository<Aluguel> aluguelRepository = new AluguelRepositoryImpl();
 
-    public static void alugarVeiculo(Pessoa pessoa, Veiculo veiculo, LocalDate dataInicio, VeiculoRepository veiculos,
-                                     PessoaRepository pessoas) {
+    public static void alugarVeiculo(Pessoa pessoa, Veiculo veiculo, LocalDateTime dataInicio, LocaisAluguel localAluguel,
+                                     VeiculoRepository veiculos, PessoaRepository pessoas) {
 
         if (!veiculo.isAlugado()) {
 
@@ -33,7 +35,7 @@ public class AluguelService {
             }
 
             // registrar aluguel
-            Aluguel aluguel = Aluguel.builder().pessoa(pessoa).veiculo(veiculo).dataInicio(dataInicio).build();
+            Aluguel aluguel = Aluguel.builder().pessoa(pessoa).veiculo(veiculo).dataInicio(dataInicio).locaisAluguel(localAluguel).build();
             aluguelRepository.registrarAlugel(aluguel);
             pessoa.registrarVeiculoAlugado(veiculo);
             veiculo.setAlugado(true);
@@ -46,7 +48,7 @@ public class AluguelService {
         }
     }
 
-    public static void devolverVeiculo(Veiculo veiculo, LocalDate dataFim, VeiculoRepository veiculos) {
+    public static void devolverVeiculo(Veiculo veiculo, LocalDateTime dataFim, LocaisAluguel localDevolucao, VeiculoRepository veiculos) {
         if (veiculo.isAlugado()) {
 
             // checar cadastro do veiculo
@@ -60,10 +62,10 @@ public class AluguelService {
             }
 
 
-            Aluguel devolvido = aluguelRepository.devolverVeiculo(veiculo.getPlaca());
+            Aluguel devolvido = aluguelRepository.devolverVeiculo(veiculo.getPlaca(), localDevolucao);
             devolvido.getPessoa().removerVeiculoAlugado(veiculo);
             devolvido.getVeiculo().setAlugado(false);
-            System.out.printf("Veiculo %s de placa %s devolvido!\n", veiculo.getNome(), veiculo.getPlaca());
+            System.out.printf("Veiculo %s de placa %s devolvido na %s!\n", veiculo.getNome(), veiculo.getPlaca(), localDevolucao);
             calcularValorTotal(devolvido, dataFim);
         } else {
             throw new RuntimeException("Nao e possivel devolver um veiculo que nao esteja alugado!\n");
@@ -92,12 +94,16 @@ public class AluguelService {
     }
 
 
-    private static void calcularValorTotal(Aluguel devolucao, LocalDate dataFim) {
+    private static void calcularValorTotal(Aluguel devolucao, LocalDateTime dataFim) {
         boolean isSUV = devolucao.getVeiculo().getTipo() == TipoVeiculo.SUV;
 
         double valorDiaria = isSUV ? 200.0 : (devolucao.getVeiculo().getTipo() == TipoVeiculo.MEDIO ? 150.0 : 100.0);
 
-        int duracaoEmDias = (int) ChronoUnit.DAYS.between(devolucao.getDataInicio(), dataFim);
+        int duracaoHoras = (int) ChronoUnit.HOURS.between(devolucao.getDataInicio(), dataFim);
+        int duracaoEmDias = (duracaoHoras / 24);
+        if ((duracaoHoras % 24) > 0) {
+            duracaoEmDias += 1;
+        }
 
         double valorTotal = valorDiaria * duracaoEmDias;
 

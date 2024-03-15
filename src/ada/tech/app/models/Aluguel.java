@@ -5,7 +5,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDate;
+import java.sql.Time;
+import java.time.LocalDateTime;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -19,11 +21,12 @@ public class Aluguel {
     private Integer repositoryID;
     private Pessoa pessoa;
     private Veiculo veiculo;
-    private LocalDate dataInicio;
+    private LocalDateTime dataInicio; //Uso de localdatetime devido já utilizar data e hora
+    private LocaisAluguel locaisAluguel; //Criando enum para limitar locais de aluguel
 
     @Override
     public String toString() {
-        return "Alugado o veiculo de placa %s para %s".formatted(veiculo.getPlaca(), pessoa.getNome());
+        return "Alugado o veiculo de placa %s para %s na %s".formatted(veiculo.getPlaca(), pessoa.getNome(), locaisAluguel);
     }
 
 }
