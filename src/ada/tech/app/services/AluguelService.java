@@ -6,6 +6,7 @@ import ada.tech.app.repositories.api.PessoaRepository;
 import ada.tech.app.repositories.api.VeiculoRepository;
 import ada.tech.app.repositories.impl.AluguelRepositoryImpl;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Optional;
@@ -93,26 +94,39 @@ public class AluguelService {
 
 
     private static void calcularValorTotal(Aluguel devolucao, LocalDateTime dataFim) {
-        boolean isSUV = devolucao.getVeiculo().getTipo() == TipoVeiculo.SUV;
+        TipoVeiculo tipoVeiculo = devolucao.getVeiculo().getTipo();
 
-        double valorDiaria = isSUV ? 200.0 : (devolucao.getVeiculo().getTipo() == TipoVeiculo.MEDIO ? 150.0 : 100.0);
+        double valorDiaria = switch (tipoVeiculo) {
+            case SUV -> 200.0;
+            case MEDIO -> 150.0;
+            case PEQUENO -> 100.0;
+        };
 
-        int duracaoHoras = (int) ChronoUnit.HOURS.between(devolucao.getDataInicio(), dataFim);
-        int duracaoEmDias = (duracaoHoras / 24);
-        if ((duracaoHoras % 24) > 0) {
-            duracaoEmDias += 1;
+        Duration duracaoDaLocacao = Duration.between(devolucao.getDataInicio(), dataFim);
+        long minutosSobrando = duracaoDaLocacao.toMinutes() % 60;
+        long segundosSobrando = duracaoDaLocacao.getSeconds() % 60;
+
+        double tempoAlugadoEmHoras = (double) ChronoUnit.HOURS.between(devolucao.getDataInicio(), dataFim);
+        int tempoAlugadoEmDias = (int) (tempoAlugadoEmHoras / 24);
+
+        if ((tempoAlugadoEmHoras % 24) > 0) {
+            tempoAlugadoEmDias += 1;
+        } else {
+            if (minutosSobrando > 0 || segundosSobrando > 0) {
+                tempoAlugadoEmDias += 1;
+            }
         }
 
-        double valorTotal = valorDiaria * duracaoEmDias;
+        double valorTotal = valorDiaria * tempoAlugadoEmDias;
 
-        if (devolucao.getPessoa() instanceof PF && duracaoEmDias > 5) {
+        if (devolucao.getPessoa() instanceof PF && tempoAlugadoEmDias > 5) {
             valorTotal *= 0.95;
-        } else if (devolucao.getPessoa() instanceof PJ && duracaoEmDias > 3) {
+        } else if (devolucao.getPessoa() instanceof PJ && tempoAlugadoEmDias > 3) {
             valorTotal *= 0.90;
         }
 
         System.out.printf("Total a cobrar: R$ %.2f - %d dias alugando o %s.\n", valorTotal,
-                duracaoEmDias, devolucao.getVeiculo().getNome());
+                tempoAlugadoEmDias, devolucao.getVeiculo().getNome());
 
     }
 
