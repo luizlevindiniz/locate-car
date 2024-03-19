@@ -11,7 +11,7 @@ public class TestePessoas {
 
     public static void testarPessoas(PessoaRepository pessoas) {
 
-        PF pf1 = new PF("Bruno Pinho", "084.518.526-88");
+        PF pf1 = new PF("Bruno Pinho", "527.759.887-02");
         PJ pj1 = new PJ("Ada Tech", "40.846.322/0001-70");
 
         // adicionar PF e PJ no repositorio
