@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 public class TesteAlugueis {
 
     public static void testarAlugueis(PessoaRepository pessoas, VeiculoRepository veiculos) {
-        PF pf1 = new PF("Bruno Pinho", "084.518.526-88");
+        PF pf1 = new PF("Bruno Pinho", "527.759.887-02");
         PF pf2 = new PF("Max Verstappen", "830.460.530-96");
         PJ pj1 = new PJ("Ada Tech", "40.846.322/0001-70");
         PJ pj2 = new PJ("Ada Tech 2", "40.846.322/0001-99");
